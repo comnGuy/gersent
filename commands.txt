@@ -1,0 +1,14 @@
+commands for upload new versions
+
+# Install wheel
+python -m pip install --user --upgrade setuptools wheel
+pip install wheel
+
+# Build
+python setup.py sdist bdist_wheel
+
+python -m pip install --user --upgrade twine
+pip install twine
+
+# Upload
+python -m twine upload --repository-url https://test.pypi.org/legacy/ dist/*
