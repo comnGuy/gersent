@@ -1,3 +1,5 @@
+from inspect import getsourcefile
+import os
 import json
 
 
@@ -19,10 +21,6 @@ class GerSent:
             self.sentiment_instance = SimpleSentiment()
 
 
-import os
-from inspect import getsourcefile
-
-
 class SimpleSentiment:
     WORDLIST_POSITIVE_PATH = "wordlists/de/positive.json"
     WORDLIST_NEGATIVE_PATH = "wordlists/de/negative.json"
@@ -30,10 +28,12 @@ class SimpleSentiment:
     def __init__(self):
         _this_module_file_path_ = os.path.abspath(getsourcefile(lambda: 0))
         self.WORDLIST_POSITIVE_PATH = os.path.join(
-            os.path.dirname(_this_module_file_path_), self.WORDLIST_POSITIVE_PATH
+            os.path.dirname(
+                _this_module_file_path_), self.WORDLIST_POSITIVE_PATH
         )
         self.WORDLIST_NEGATIVE_PATH = os.path.join(
-            os.path.dirname(_this_module_file_path_), self.WORDLIST_NEGATIVE_PATH
+            os.path.dirname(
+                _this_module_file_path_), self.WORDLIST_NEGATIVE_PATH
         )
 
         self.wordlist_negative = {}
@@ -53,9 +53,15 @@ class SimpleSentiment:
         return self._algorithm(sentence)
 
     def _algorithm(self, sentence: str):
-        sentence = self._preprocessing(sentence)
-        negative_score = self._evaluate_negative(sentence, self.wordlist_negative)
-        positive_score = self._evaluate_negative(sentence, self.wordlist_positiv)
+        sentence_preprocessed = self._preprocessing(sentence)
+        negative_score = self._evaluate(
+            sentence_preprocessed, self.wordlist_negative)
+        positive_score = self._evaluate(
+            sentence_preprocessed, self.wordlist_positiv)
+
+        multiplier = self.multiplier(sentence)
+        negative_score *= multiplier
+        positive_score *= multiplier
 
         return {
             "negative": negative_score,
@@ -63,7 +69,7 @@ class SimpleSentiment:
             "composite": negative_score + positive_score,
         }
 
-    def _evaluate_negative(self, sentence, wordlist):
+    def _evaluate(self, sentence, wordlist):
         words = sentence.split(" ")
         score = 0.0
         for word in words:
@@ -71,8 +77,17 @@ class SimpleSentiment:
                 score += float(wordlist[word])
         return score
 
-    def _evaluate_positive(self, sentence: str):
-        pass
-
     def _preprocessing(self, sentence: str):
         return sentence.replace(".", "").replace("!", "").replace(",", "")
+
+    # TODO (Bernhard): "Ich bin ein guter Satz! "
+    # TODO (Bernhard): "Ich bin ein guter Satz!!!!"
+    def multiplier(self, sentence: str):
+        multiplier = 1.0
+        multiplier += self.last_symbol(sentence)
+        return multiplier
+
+    def last_symbol(self, sentence):
+        if sentence[-1] is '!':
+            return 0.1
+        return 0.0
