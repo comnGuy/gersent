@@ -1,32 +1,26 @@
-from gersenti import Gersenti
+from gersent import GerSent
 
 
-ger_senti = Gersenti()
+ger_senti = GerSent()
 
-result = ger_senti.sentiment(
-    "Ich nehme dir die Aktion krumm, nicht so negativ sondern positiv!")
+print('Positiv')
+positive_sentence_list = [
+    'Die Äpfel schmecken gut.',
+    'Die Äpfel schmecken gut!',
+    'Die Äpfel schmecken gut!!!',
+    'Die Äpfel schmecken sehr gut!',
+]
+for sentence in positive_sentence_list:
+    print(sentence)
+    print(ger_senti.sentiment(sentence))
+    print()
 
-print(result)
-
-
-# import json
-
-
-# path = './wordlists/de/negativ.txt'
-
-# with open(path, encoding='utf-8') as f:
-#     content = f.readlines()
-# content = [x.replace('\n', '').split('\t') for x in content]
-
-# positive = {}
-# for word in content:
-#     score = word[1]
-#     positive[word[0].split('|')[0]] = score
-#     words = word[2].split(',')
-#     for extracted_word in words:
-#         if extracted_word is not '':
-#             positive[extracted_word] = score
-
-
-# with open('./wordlists/de/negativ.json', 'w') as fp:
-#     json.dump(positive, fp)
+print('Negativ')
+negative_sentence_list = [
+    'Die Äpfel schmecken nicht gut.',
+    'Ich nehme dir die Aktion krumm, nicht so negativ sondern positiv!',
+]
+for sentence in negative_sentence_list:
+    print(sentence)
+    print(ger_senti.sentiment(sentence))
+    print()
