@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="gersent",  # Replace with your own username
-    version="0.0.3",
+    version="0.0.5",
     author="Bernhrd Preisler",
     author_email="bpblub@gmail.com",
     description="Easy german sentiment",
