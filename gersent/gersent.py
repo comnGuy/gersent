@@ -28,12 +28,12 @@ class SimpleSentiment:
     def __init__(self):
         _this_module_file_path_ = os.path.abspath(getsourcefile(lambda: 0))
         self.WORDLIST_POSITIVE_PATH = os.path.join(
-            os.path.dirname(
-                _this_module_file_path_), self.WORDLIST_POSITIVE_PATH
+            os.path.dirname(_this_module_file_path_), 
+            self.WORDLIST_POSITIVE_PATH
         )
         self.WORDLIST_NEGATIVE_PATH = os.path.join(
-            os.path.dirname(
-                _this_module_file_path_), self.WORDLIST_NEGATIVE_PATH
+            os.path.dirname(_this_module_file_path_), 
+            self.WORDLIST_NEGATIVE_PATH
         )
 
         self.wordlist_negative = {}
@@ -54,19 +54,20 @@ class SimpleSentiment:
 
     def _algorithm(self, sentence: str):
         sentence_preprocessed = self._preprocessing(sentence)
-        negative_score = self._evaluate(
-            sentence_preprocessed, self.wordlist_negative)
-        positive_score = self._evaluate(
-            sentence_preprocessed, self.wordlist_positiv)
+        negative_score = self._evaluate(sentence_preprocessed, self.wordlist_negative)
+        positive_score = self._evaluate(sentence_preprocessed, self.wordlist_positiv)
 
         multiplier = self.multiplier(sentence)
+
         negative_score *= multiplier
         positive_score *= multiplier
 
+        negation = self._negation(sentence)
+
         return {
-            "negative": negative_score,
-            "positive": positive_score,
-            "composite": negative_score + positive_score,
+            "negative": negative_score * negation,
+            "positive": positive_score * negation,
+            "composite": (negative_score + positive_score) * negation,
         }
 
     def _evaluate(self, sentence, wordlist):
@@ -80,14 +81,19 @@ class SimpleSentiment:
     def _preprocessing(self, sentence: str):
         return sentence.replace(".", "").replace("!", "").replace(",", "")
 
-    # TODO (Bernhard): "Ich bin ein guter Satz! "
-    # TODO (Bernhard): "Ich bin ein guter Satz!!!!"
     def multiplier(self, sentence: str):
         multiplier = 1.0
         multiplier += self.last_symbol(sentence)
         return multiplier
 
     def last_symbol(self, sentence):
-        if sentence[-1] is '!':
-            return 0.1
-        return 0.0
+        return sentence.count("!") * 0.05
+
+    # TODO (Bernhard): Maybe relate nicht to the next value
+    def _negation(self, sentence):
+        words = sentence.split(" ")
+        for word in words:
+            if word == "nicht":
+                return -1
+        return 1
+
