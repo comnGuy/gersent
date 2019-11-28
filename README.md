@@ -5,6 +5,7 @@ GerSent is a project that tries to make a relativ good sentiment of a german sen
 ## Getting Started
 
 First you have to install our package.
+
 `pip install gersent`
 
 Now you are able to run a simple sentiment analysis over a german sentence.

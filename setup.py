@@ -5,10 +5,10 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="gersent",  # Replace with your own username
-    version="0.0.5",
+    version="0.0.6",
     author="Bernhard Preisler",
     author_email="bpblub@gmail.com",
-    description="Easy german sentiment",
+    description="Simple german sentiment",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/comnGuy/gersent",
